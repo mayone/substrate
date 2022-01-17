@@ -932,6 +932,14 @@
 <span id="932">932</span>
 <span id="933">933</span>
 <span id="934">934</span>
+<span id="935">935</span>
+<span id="936">936</span>
+<span id="937">937</span>
+<span id="938">938</span>
+<span id="939">939</span>
+<span id="940">940</span>
+<span id="941">941</span>
+<span id="942">942</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2018-2022 Parity Technologies (UK) Ltd.</span>
@@ -1566,6 +1574,10 @@
 		<span class="doccomment">/// or via RPC an `Ok` will be returned. In this case the caller needs to inspect the flags</span>
 		<span class="doccomment">/// to determine whether a reversion has taken place.</span>
 		<span class="ident">ContractReverted</span>,
+		<span class="doccomment">/// The contract&#39;s code was found to be invalid during validation or instrumentation.</span>
+		<span class="doccomment">/// A more detailed error can be found on the node console if debug messages are enabled</span>
+		<span class="doccomment">/// or in the debug buffer which is returned to RPC clients.</span>
+		<span class="ident">CodeRejected</span>,
 	}
 
 	<span class="doccomment">/// A mapping from an original code hash to the original code, untouched by instrumentation.</span>
@@ -1715,7 +1727,8 @@
 		<span class="ident">storage_deposit_limit</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">BalanceOf</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 	) -&gt; <span class="ident">CodeUploadResult</span><span class="op">&lt;</span><span class="ident">CodeHash</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>, <span class="ident">BalanceOf</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> {
 		<span class="kw">let</span> <span class="ident">schedule</span> <span class="op">=</span> <span class="ident">T::Schedule::get</span>();
-		<span class="kw">let</span> <span class="ident">module</span> <span class="op">=</span> <span class="ident">PrefabWasmModule::from_code</span>(<span class="ident">code</span>, <span class="kw-2">&amp;</span><span class="ident">schedule</span>, <span class="ident">origin</span>)<span class="question-mark">?</span>;
+		<span class="kw">let</span> <span class="ident">module</span> <span class="op">=</span> <span class="ident">PrefabWasmModule::from_code</span>(<span class="ident">code</span>, <span class="kw-2">&amp;</span><span class="ident">schedule</span>, <span class="ident">origin</span>)
+			.<span class="ident">map_err</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::CodeRejected</span>)<span class="question-mark">?</span>;
 		<span class="kw">let</span> <span class="ident">deposit</span> <span class="op">=</span> <span class="ident">module</span>.<span class="ident">open_deposit</span>();
 		<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">storage_deposit_limit</span>) <span class="op">=</span> <span class="ident">storage_deposit_limit</span> {
 			<span class="macro">ensure!</span>(<span class="ident">storage_deposit_limit</span> <span class="op">&gt;</span><span class="op">=</span> <span class="ident">deposit</span>, <span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::StorageDepositLimitExhausted</span>);
@@ -1813,7 +1826,7 @@
 		<span class="ident">code</span>: <span class="ident">Code</span><span class="op">&lt;</span><span class="ident">CodeHash</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 		<span class="ident">data</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
 		<span class="ident">salt</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>,
-		<span class="ident">debug_message</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span>,
+		<span class="kw-2">mut</span> <span class="ident">debug_message</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="kw-2">&amp;mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 	) -&gt; <span class="ident">InternalInstantiateOutput</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">storage_deposit</span> <span class="op">=</span> <span class="ident">Default::default</span>();
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">gas_meter</span> <span class="op">=</span> <span class="ident">GasMeter::new</span>(<span class="ident">gas_limit</span>);
@@ -1825,8 +1838,11 @@
 						<span class="ident">binary</span>.<span class="ident">len</span>() <span class="kw">as</span> <span class="ident">u32</span> <span class="op">&lt;</span><span class="op">=</span> <span class="ident">schedule</span>.<span class="ident">limits</span>.<span class="ident">code_len</span>,
 						<span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::CodeTooLarge</span>
 					);
-					<span class="kw">let</span> <span class="ident">executable</span> <span class="op">=</span>
-						<span class="ident">PrefabWasmModule::from_code</span>(<span class="ident">binary</span>, <span class="kw-2">&amp;</span><span class="ident">schedule</span>, <span class="ident">origin</span>.<span class="ident">clone</span>())<span class="question-mark">?</span>;
+					<span class="kw">let</span> <span class="ident">executable</span> <span class="op">=</span> <span class="ident">PrefabWasmModule::from_code</span>(<span class="ident">binary</span>, <span class="kw-2">&amp;</span><span class="ident">schedule</span>, <span class="ident">origin</span>.<span class="ident">clone</span>())
+						.<span class="ident">map_err</span>(<span class="op">|</span><span class="ident">msg</span><span class="op">|</span> {
+							<span class="ident">debug_message</span>.<span class="ident">as_mut</span>().<span class="ident">map</span>(<span class="op">|</span><span class="ident">buffer</span><span class="op">|</span> <span class="ident">buffer</span>.<span class="ident">extend</span>(<span class="ident">msg</span>.<span class="ident">as_bytes</span>()));
+							<span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::CodeRejected</span>
+						})<span class="question-mark">?</span>;
 					<span class="macro">ensure!</span>(
 						<span class="ident">executable</span>.<span class="ident">code_len</span>() <span class="op">&lt;</span><span class="op">=</span> <span class="ident">schedule</span>.<span class="ident">limits</span>.<span class="ident">code_len</span>,
 						<span class="op">&lt;</span><span class="ident">Error</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="ident">::CodeTooLarge</span>

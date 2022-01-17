@@ -1085,6 +1085,14 @@
 <span id="1085">1085</span>
 <span id="1086">1086</span>
 <span id="1087">1087</span>
+<span id="1088">1088</span>
+<span id="1089">1089</span>
+<span id="1090">1090</span>
+<span id="1091">1091</span>
+<span id="1092">1092</span>
+<span id="1093">1093</span>
+<span id="1094">1094</span>
+<span id="1095">1095</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2018-2022 Parity Technologies (UK) Ltd.</span>
@@ -1459,26 +1467,34 @@
 	<span class="ident">original_code</span>: <span class="kw-2">&amp;</span>[<span class="ident">u8</span>],
 	<span class="ident">schedule</span>: <span class="kw-2">&amp;</span><span class="ident">Schedule</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>,
 ) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(<span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">u8</span><span class="op">&gt;</span>, (<span class="ident">u32</span>, <span class="ident">u32</span>)), <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span> {
-	<span class="kw">let</span> <span class="ident">contract_module</span> <span class="op">=</span> <span class="ident">ContractModule::new</span>(<span class="kw-2">&amp;</span><span class="ident">original_code</span>, <span class="ident">schedule</span>)<span class="question-mark">?</span>;
-	<span class="ident">contract_module</span>.<span class="ident">scan_exports</span>()<span class="question-mark">?</span>;
-	<span class="ident">contract_module</span>.<span class="ident">ensure_no_internal_memory</span>()<span class="question-mark">?</span>;
-	<span class="ident">contract_module</span>.<span class="ident">ensure_table_size_limit</span>(<span class="ident">schedule</span>.<span class="ident">limits</span>.<span class="ident">table_size</span>)<span class="question-mark">?</span>;
-	<span class="ident">contract_module</span>.<span class="ident">ensure_global_variable_limit</span>(<span class="ident">schedule</span>.<span class="ident">limits</span>.<span class="ident">globals</span>)<span class="question-mark">?</span>;
-	<span class="ident">contract_module</span>.<span class="ident">ensure_no_floating_types</span>()<span class="question-mark">?</span>;
-	<span class="ident">contract_module</span>.<span class="ident">ensure_parameter_limit</span>(<span class="ident">schedule</span>.<span class="ident">limits</span>.<span class="ident">parameters</span>)<span class="question-mark">?</span>;
-	<span class="ident">contract_module</span>.<span class="ident">ensure_br_table_size_limit</span>(<span class="ident">schedule</span>.<span class="ident">limits</span>.<span class="ident">br_table_size</span>)<span class="question-mark">?</span>;
+	<span class="kw">let</span> <span class="ident">result</span> <span class="op">=</span> (<span class="op">|</span><span class="op">|</span> {
+		<span class="kw">let</span> <span class="ident">contract_module</span> <span class="op">=</span> <span class="ident">ContractModule::new</span>(<span class="kw-2">&amp;</span><span class="ident">original_code</span>, <span class="ident">schedule</span>)<span class="question-mark">?</span>;
+		<span class="ident">contract_module</span>.<span class="ident">scan_exports</span>()<span class="question-mark">?</span>;
+		<span class="ident">contract_module</span>.<span class="ident">ensure_no_internal_memory</span>()<span class="question-mark">?</span>;
+		<span class="ident">contract_module</span>.<span class="ident">ensure_table_size_limit</span>(<span class="ident">schedule</span>.<span class="ident">limits</span>.<span class="ident">table_size</span>)<span class="question-mark">?</span>;
+		<span class="ident">contract_module</span>.<span class="ident">ensure_global_variable_limit</span>(<span class="ident">schedule</span>.<span class="ident">limits</span>.<span class="ident">globals</span>)<span class="question-mark">?</span>;
+		<span class="ident">contract_module</span>.<span class="ident">ensure_no_floating_types</span>()<span class="question-mark">?</span>;
+		<span class="ident">contract_module</span>.<span class="ident">ensure_parameter_limit</span>(<span class="ident">schedule</span>.<span class="ident">limits</span>.<span class="ident">parameters</span>)<span class="question-mark">?</span>;
+		<span class="ident">contract_module</span>.<span class="ident">ensure_br_table_size_limit</span>(<span class="ident">schedule</span>.<span class="ident">limits</span>.<span class="ident">br_table_size</span>)<span class="question-mark">?</span>;
 
-	<span class="comment">// We disallow importing `gas` function here since it is treated as implementation detail.</span>
-	<span class="kw">let</span> <span class="ident">disallowed_imports</span> <span class="op">=</span> [<span class="string">b&quot;gas&quot;</span>.<span class="ident">as_ref</span>()];
-	<span class="kw">let</span> <span class="ident">memory_limits</span> <span class="op">=</span>
-		<span class="ident">get_memory_limits</span>(<span class="ident">contract_module</span>.<span class="ident">scan_imports</span>::<span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">disallowed_imports</span>)<span class="question-mark">?</span>, <span class="ident">schedule</span>)<span class="question-mark">?</span>;
+		<span class="comment">// We disallow importing `gas` function here since it is treated as implementation detail.</span>
+		<span class="kw">let</span> <span class="ident">disallowed_imports</span> <span class="op">=</span> [<span class="string">b&quot;gas&quot;</span>.<span class="ident">as_ref</span>()];
+		<span class="kw">let</span> <span class="ident">memory_limits</span> <span class="op">=</span>
+			<span class="ident">get_memory_limits</span>(<span class="ident">contract_module</span>.<span class="ident">scan_imports</span>::<span class="op">&lt;</span><span class="ident">C</span><span class="op">&gt;</span>(<span class="kw-2">&amp;</span><span class="ident">disallowed_imports</span>)<span class="question-mark">?</span>, <span class="ident">schedule</span>)<span class="question-mark">?</span>;
 
-	<span class="kw">let</span> <span class="ident">code</span> <span class="op">=</span> <span class="ident">contract_module</span>
-		.<span class="ident">inject_gas_metering</span>()<span class="question-mark">?</span>
-		.<span class="ident">inject_stack_height_metering</span>()<span class="question-mark">?</span>
-		.<span class="ident">into_wasm_code</span>()<span class="question-mark">?</span>;
+		<span class="kw">let</span> <span class="ident">code</span> <span class="op">=</span> <span class="ident">contract_module</span>
+			.<span class="ident">inject_gas_metering</span>()<span class="question-mark">?</span>
+			.<span class="ident">inject_stack_height_metering</span>()<span class="question-mark">?</span>
+			.<span class="ident">into_wasm_code</span>()<span class="question-mark">?</span>;
 
-	<span class="prelude-val">Ok</span>((<span class="ident">code</span>, <span class="ident">memory_limits</span>))
+		<span class="prelude-val">Ok</span>((<span class="ident">code</span>, <span class="ident">memory_limits</span>))
+	})();
+
+	<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Err</span>(<span class="ident">msg</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">result</span> {
+		<span class="macro">log::debug!</span>(<span class="ident">target</span>: <span class="string">&quot;runtime::contracts&quot;</span>, <span class="string">&quot;CodeRejected: {}&quot;</span>, <span class="ident">msg</span>);
+	}
+
+	<span class="ident">result</span>
 }
 
 <span class="kw">fn</span> <span class="ident">do_preparation</span><span class="op">&lt;</span><span class="ident">C</span>: <span class="ident">ImportSatisfyCheck</span>, <span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span>(
