@@ -154,7 +154,7 @@
 <span class="comment">// along with this program. If not, see &lt;https://www.gnu.org/licenses/&gt;.</span>
 
 <span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::error::WasmError</span>;
-<span class="kw">use</span> <span class="ident">pwasm_utils</span>::{
+<span class="kw">use</span> <span class="ident">wasm_instrument</span>::{
 	<span class="ident">export_mutable_globals</span>,
 	<span class="ident">parity_wasm::elements</span>::{<span class="ident">deserialize_buffer</span>, <span class="ident">serialize</span>, <span class="ident">DataSegment</span>, <span class="ident">Internal</span>, <span class="ident">Module</span>},
 };
@@ -221,7 +221,7 @@
 	<span class="doccomment">/// depth of the wasm operand stack.</span>
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">inject_stack_depth_metering</span>(<span class="self">self</span>, <span class="ident">stack_depth_limit</span>: <span class="ident">u32</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">WasmError</span><span class="op">&gt;</span> {
 		<span class="kw">let</span> <span class="ident">injected_module</span> <span class="op">=</span>
-			<span class="ident">pwasm_utils::stack_height::inject_limiter</span>(<span class="self">self</span>.<span class="ident">raw_module</span>, <span class="ident">stack_depth_limit</span>).<span class="ident">map_err</span>(
+			<span class="ident">wasm_instrument::inject_stack_limiter</span>(<span class="self">self</span>.<span class="ident">raw_module</span>, <span class="ident">stack_depth_limit</span>).<span class="ident">map_err</span>(
 				<span class="op">|</span><span class="ident">e</span><span class="op">|</span> <span class="ident">WasmError::Other</span>(<span class="macro">format!</span>(<span class="string">&quot;cannot inject the stack limiter: {:?}&quot;</span>, <span class="ident">e</span>)),
 			)<span class="question-mark">?</span>;
 

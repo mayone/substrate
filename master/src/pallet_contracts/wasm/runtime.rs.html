@@ -1879,12 +1879,12 @@
 <span class="kw">use</span> <span class="ident">codec</span>::{<span class="ident">Decode</span>, <span class="ident">DecodeAll</span>, <span class="ident">Encode</span>, <span class="ident">MaxEncodedLen</span>};
 <span class="kw">use</span> <span class="ident">frame_support</span>::{<span class="ident">dispatch::DispatchError</span>, <span class="ident">ensure</span>, <span class="ident">weights::Weight</span>};
 <span class="kw">use</span> <span class="ident">pallet_contracts_primitives</span>::{<span class="ident">ExecReturnValue</span>, <span class="ident">ReturnFlags</span>};
-<span class="kw">use</span> <span class="ident">pwasm_utils::parity_wasm::elements::ValueType</span>;
 <span class="kw">use</span> <span class="ident">sp_core</span>::{<span class="ident">crypto::UncheckedFrom</span>, <span class="ident">Bytes</span>};
 <span class="kw">use</span> <span class="ident">sp_io::hashing</span>::{<span class="ident">blake2_128</span>, <span class="ident">blake2_256</span>, <span class="ident">keccak_256</span>, <span class="ident">sha2_256</span>};
 <span class="kw">use</span> <span class="ident">sp_runtime::traits</span>::{<span class="ident">Bounded</span>, <span class="ident">Zero</span>};
 <span class="kw">use</span> <span class="ident">sp_sandbox::SandboxMemory</span>;
 <span class="kw">use</span> <span class="ident">sp_std::prelude</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">wasm_instrument::parity_wasm::elements::ValueType</span>;
 
 <span class="doccomment">/// Every error that can be returned to a contract when it calls any of the host functions.</span>
 <span class="doccomment">///</span>

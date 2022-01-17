@@ -1093,6 +1093,7 @@
 <span id="1093">1093</span>
 <span id="1094">1094</span>
 <span id="1095">1095</span>
+<span id="1096">1096</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2018-2022 Parity Technologies (UK) Ltd.</span>
@@ -1121,9 +1122,11 @@
 	<span class="ident">AccountIdOf</span>, <span class="ident">Config</span>, <span class="ident">Schedule</span>,
 };
 <span class="kw">use</span> <span class="ident">codec</span>::{<span class="ident">Encode</span>, <span class="ident">MaxEncodedLen</span>};
-<span class="kw">use</span> <span class="ident">pwasm_utils::parity_wasm::elements</span>::{<span class="self">self</span>, <span class="ident">External</span>, <span class="ident">Internal</span>, <span class="ident">MemoryType</span>, <span class="ident">Type</span>, <span class="ident">ValueType</span>};
 <span class="kw">use</span> <span class="ident">sp_runtime::traits::Hash</span>;
 <span class="kw">use</span> <span class="ident">sp_std::prelude</span>::<span class="kw-2">*</span>;
+<span class="kw">use</span> <span class="ident">wasm_instrument::parity_wasm::elements</span>::{
+	<span class="self">self</span>, <span class="ident">External</span>, <span class="ident">Internal</span>, <span class="ident">MemoryType</span>, <span class="ident">Type</span>, <span class="ident">ValueType</span>,
+};
 
 <span class="doccomment">/// Imported memory must be located inside this module. The reason for hardcoding is that current</span>
 <span class="doccomment">/// compiler toolchains might not support specifying other modules than &quot;env&quot; for memory imports.</span>
@@ -1277,17 +1280,16 @@
 
 	<span class="kw">fn</span> <span class="ident">inject_gas_metering</span>(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span> {
 		<span class="kw">let</span> <span class="ident">gas_rules</span> <span class="op">=</span> <span class="self">self</span>.<span class="ident">schedule</span>.<span class="ident">rules</span>(<span class="kw-2">&amp;</span><span class="self">self</span>.<span class="ident">module</span>);
-		<span class="kw">let</span> <span class="ident">contract_module</span> <span class="op">=</span> <span class="ident">pwasm_utils::inject_gas_counter</span>(<span class="self">self</span>.<span class="ident">module</span>, <span class="kw-2">&amp;</span><span class="ident">gas_rules</span>, <span class="string">&quot;seal0&quot;</span>)
-			.<span class="ident">map_err</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="string">&quot;gas instrumentation failed&quot;</span>)<span class="question-mark">?</span>;
+		<span class="kw">let</span> <span class="ident">contract_module</span> <span class="op">=</span>
+			<span class="ident">wasm_instrument::gas_metering::inject</span>(<span class="self">self</span>.<span class="ident">module</span>, <span class="kw-2">&amp;</span><span class="ident">gas_rules</span>, <span class="string">&quot;seal0&quot;</span>)
+				.<span class="ident">map_err</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="string">&quot;gas instrumentation failed&quot;</span>)<span class="question-mark">?</span>;
 		<span class="prelude-val">Ok</span>(<span class="ident">ContractModule</span> { <span class="ident">module</span>: <span class="ident">contract_module</span>, <span class="ident">schedule</span>: <span class="self">self</span>.<span class="ident">schedule</span> })
 	}
 
 	<span class="kw">fn</span> <span class="ident">inject_stack_height_metering</span>(<span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span> {
-		<span class="kw">let</span> <span class="ident">contract_module</span> <span class="op">=</span> <span class="ident">pwasm_utils::stack_height::inject_limiter</span>(
-			<span class="self">self</span>.<span class="ident">module</span>,
-			<span class="self">self</span>.<span class="ident">schedule</span>.<span class="ident">limits</span>.<span class="ident">stack_height</span>,
-		)
-		.<span class="ident">map_err</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="string">&quot;stack height instrumentation failed&quot;</span>)<span class="question-mark">?</span>;
+		<span class="kw">let</span> <span class="ident">contract_module</span> <span class="op">=</span>
+			<span class="ident">wasm_instrument::inject_stack_limiter</span>(<span class="self">self</span>.<span class="ident">module</span>, <span class="self">self</span>.<span class="ident">schedule</span>.<span class="ident">limits</span>.<span class="ident">stack_height</span>)
+				.<span class="ident">map_err</span>(<span class="op">|</span><span class="kw">_</span><span class="op">|</span> <span class="string">&quot;stack height instrumentation failed&quot;</span>)<span class="question-mark">?</span>;
 		<span class="prelude-val">Ok</span>(<span class="ident">ContractModule</span> { <span class="ident">module</span>: <span class="ident">contract_module</span>, <span class="ident">schedule</span>: <span class="self">self</span>.<span class="ident">schedule</span> })
 	}
 
