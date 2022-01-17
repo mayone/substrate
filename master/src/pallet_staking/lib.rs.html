@@ -851,9 +851,6 @@
 <span id="851">851</span>
 <span id="852">852</span>
 <span id="853">853</span>
-<span id="854">854</span>
-<span id="855">855</span>
-<span id="856">856</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2017-2022 Parity Technologies (UK) Ltd.</span>
@@ -1168,7 +1165,7 @@
 };
 <span class="kw">use</span> <span class="ident">sp_staking</span>::{
 	<span class="ident">offence</span>::{<span class="ident">Offence</span>, <span class="ident">OffenceError</span>, <span class="ident">ReportOffence</span>},
-	<span class="ident">SessionIndex</span>,
+	<span class="ident">EraIndex</span>, <span class="ident">SessionIndex</span>,
 };
 <span class="kw">use</span> <span class="ident">sp_std</span>::{<span class="ident">collections::btree_map::BTreeMap</span>, <span class="ident">convert::From</span>, <span class="ident">prelude</span>::<span class="kw-2">*</span>};
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">weights::WeightInfo</span>;
@@ -1187,9 +1184,6 @@
 		)
 	};
 }
-
-<span class="doccomment">/// Counter for the number of eras that have passed.</span>
-<span class="kw">pub</span> <span class="kw">type</span> <span class="ident">EraIndex</span> <span class="op">=</span> <span class="ident">u32</span>;
 
 <span class="doccomment">/// Counter for the number of &quot;reward&quot; points earned by a given validator.</span>
 <span class="kw">pub</span> <span class="kw">type</span> <span class="ident">RewardPoint</span> <span class="op">=</span> <span class="ident">u32</span>;

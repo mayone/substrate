@@ -1347,13 +1347,13 @@
 };
 <span class="kw">use</span> <span class="ident">sp_staking</span>::{
 	<span class="ident">offence</span>::{<span class="ident">DisableStrategy</span>, <span class="ident">OffenceDetails</span>, <span class="ident">OnOffenceHandler</span>},
-	<span class="ident">SessionIndex</span>,
+	<span class="ident">EraIndex</span>, <span class="ident">SessionIndex</span>,
 };
 <span class="kw">use</span> <span class="ident">sp_std</span>::{<span class="ident">collections::btree_map::BTreeMap</span>, <span class="ident">prelude</span>::<span class="kw-2">*</span>};
 
 <span class="kw">use</span> <span class="kw">crate</span>::{
-	<span class="ident">log</span>, <span class="ident">slashing</span>, <span class="ident">weights::WeightInfo</span>, <span class="ident">ActiveEraInfo</span>, <span class="ident">BalanceOf</span>, <span class="ident">EraIndex</span>, <span class="ident">EraPayout</span>, <span class="ident">Exposure</span>,
-	<span class="ident">ExposureOf</span>, <span class="ident">Forcing</span>, <span class="ident">IndividualExposure</span>, <span class="ident">Nominations</span>, <span class="ident">PositiveImbalanceOf</span>, <span class="ident">RewardDestination</span>,
+	<span class="ident">log</span>, <span class="ident">slashing</span>, <span class="ident">weights::WeightInfo</span>, <span class="ident">ActiveEraInfo</span>, <span class="ident">BalanceOf</span>, <span class="ident">EraPayout</span>, <span class="ident">Exposure</span>, <span class="ident">ExposureOf</span>,
+	<span class="ident">Forcing</span>, <span class="ident">IndividualExposure</span>, <span class="ident">Nominations</span>, <span class="ident">PositiveImbalanceOf</span>, <span class="ident">RewardDestination</span>,
 	<span class="ident">SessionInterface</span>, <span class="ident">StakingLedger</span>, <span class="ident">ValidatorPrefs</span>,
 };
 

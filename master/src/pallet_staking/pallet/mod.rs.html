@@ -1663,7 +1663,7 @@
 	<span class="ident">traits</span>::{<span class="ident">CheckedSub</span>, <span class="ident">SaturatedConversion</span>, <span class="ident">StaticLookup</span>, <span class="ident">Zero</span>},
 	<span class="ident">DispatchError</span>, <span class="ident">Perbill</span>, <span class="ident">Percent</span>,
 };
-<span class="kw">use</span> <span class="ident">sp_staking::SessionIndex</span>;
+<span class="kw">use</span> <span class="ident">sp_staking</span>::{<span class="ident">EraIndex</span>, <span class="ident">SessionIndex</span>};
 <span class="kw">use</span> <span class="ident">sp_std</span>::{<span class="ident">convert::From</span>, <span class="ident">prelude</span>::<span class="kw-2">*</span>, <span class="ident">result</span>};
 
 <span class="kw">mod</span> <span class="ident">impls</span>;
@@ -1671,7 +1671,7 @@
 <span class="kw">pub</span> <span class="kw">use</span> <span class="ident">impls</span>::<span class="kw-2">*</span>;
 
 <span class="kw">use</span> <span class="kw">crate</span>::{
-	<span class="ident">log</span>, <span class="ident">migrations</span>, <span class="ident">slashing</span>, <span class="ident">weights::WeightInfo</span>, <span class="ident">ActiveEraInfo</span>, <span class="ident">BalanceOf</span>, <span class="ident">EraIndex</span>, <span class="ident">EraPayout</span>,
+	<span class="ident">log</span>, <span class="ident">migrations</span>, <span class="ident">slashing</span>, <span class="ident">weights::WeightInfo</span>, <span class="ident">ActiveEraInfo</span>, <span class="ident">BalanceOf</span>, <span class="ident">EraPayout</span>,
 	<span class="ident">EraRewardPoints</span>, <span class="ident">Exposure</span>, <span class="ident">Forcing</span>, <span class="ident">NegativeImbalanceOf</span>, <span class="ident">Nominations</span>, <span class="ident">PositiveImbalanceOf</span>,
 	<span class="ident">Releases</span>, <span class="ident">RewardDestination</span>, <span class="ident">SessionInterface</span>, <span class="ident">StakingLedger</span>, <span class="ident">UnappliedSlash</span>, <span class="ident">UnlockChunk</span>,
 	<span class="ident">ValidatorPrefs</span>,
