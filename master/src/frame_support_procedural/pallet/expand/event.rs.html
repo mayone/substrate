@@ -171,6 +171,8 @@
 <span id="171">171</span>
 <span id="172">172</span>
 <span id="173">173</span>
+<span id="174">174</span>
+<span id="175">175</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2020-2022 Parity Technologies (UK) Ltd.</span>
@@ -290,9 +292,11 @@
 		)]</span>
 	));
 
-	<span class="comment">// skip requirement for type params to implement `TypeInfo`, and require docs capture</span>
+	<span class="kw">let</span> <span class="ident">capture_docs</span> <span class="op">=</span> <span class="kw">if</span> <span class="macro">cfg!</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;no-metadata-docs&quot;</span>) { <span class="string">&quot;never&quot;</span> } <span class="kw">else</span> { <span class="string">&quot;always&quot;</span> };
+
+	<span class="comment">// skip requirement for type params to implement `TypeInfo`, and set docs capture</span>
 	<span class="ident">event_item</span>.<span class="ident">attrs</span>.<span class="ident">push</span>(<span class="macro">syn::parse_quote!</span>(
-		<span class="attribute">#[<span class="ident">scale_info</span>(<span class="ident">skip_type_params</span>(#<span class="ident">event_use_gen</span>), <span class="ident">capture_docs</span> <span class="op">=</span> <span class="string">&quot;always&quot;</span>)]</span>
+		<span class="attribute">#[<span class="ident">scale_info</span>(<span class="ident">skip_type_params</span>(#<span class="ident">event_use_gen</span>), <span class="ident">capture_docs</span> <span class="op">=</span> #<span class="ident">capture_docs</span>)]</span>
 	));
 
 	<span class="kw">let</span> <span class="ident">deposit_event</span> <span class="op">=</span> <span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">deposit_event</span>) <span class="op">=</span> <span class="kw-2">&amp;</span><span class="ident">event</span>.<span class="ident">deposit_event</span> {

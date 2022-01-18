@@ -1060,6 +1060,14 @@
 <span id="1060">1060</span>
 <span id="1061">1061</span>
 <span id="1062">1062</span>
+<span id="1063">1063</span>
+<span id="1064">1064</span>
+<span id="1065">1065</span>
+<span id="1066">1066</span>
+<span id="1067">1067</span>
+<span id="1068">1068</span>
+<span id="1069">1069</span>
+<span id="1070">1070</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2021-2022 Parity Technologies (UK) Ltd.</span>
@@ -1479,7 +1487,11 @@
 	<span class="kw">fn</span> <span class="ident">build_metadata</span>(<span class="ident">docs</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span>, <span class="ident">entries</span>: <span class="kw-2">&amp;mut</span> <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">StorageEntryMetadata</span><span class="op">&gt;</span>) {
 		<span class="op">&lt;</span><span class="self">Self</span> <span class="kw">as</span> <span class="ident">MapWrapper</span><span class="op">&gt;</span><span class="ident">::Map::build_metadata</span>(<span class="ident">docs</span>, <span class="ident">entries</span>);
 		<span class="ident">CounterFor</span>::<span class="op">&lt;</span><span class="ident">Prefix</span><span class="op">&gt;</span><span class="ident">::build_metadata</span>(
-			<span class="macro">vec!</span>[<span class="kw-2">&amp;</span><span class="string">&quot;Counter for the related counted storage map&quot;</span>],
+			<span class="kw">if</span> <span class="macro">cfg!</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;no-metadata-docs&quot;</span>) {
+				<span class="macro">vec!</span>[]
+			} <span class="kw">else</span> {
+				<span class="macro">vec!</span>[<span class="kw-2">&amp;</span><span class="string">&quot;Counter for the related counted storage map&quot;</span>]
+			},
 			<span class="ident">entries</span>,
 		);
 	}
@@ -2116,7 +2128,11 @@
 					<span class="ident">modifier</span>: <span class="ident">StorageEntryModifier::Default</span>,
 					<span class="ident">ty</span>: <span class="ident">StorageEntryType::Plain</span>(<span class="ident">scale_info::meta_type</span>::<span class="op">&lt;</span><span class="ident">u32</span><span class="op">&gt;</span>()),
 					<span class="ident">default</span>: <span class="macro">vec!</span>[<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>],
-					<span class="ident">docs</span>: <span class="macro">vec!</span>[<span class="string">&quot;Counter for the related counted storage map&quot;</span>],
+					<span class="ident">docs</span>: <span class="kw">if</span> <span class="macro">cfg!</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;no-metadata-docs&quot;</span>) {
+						<span class="macro">vec!</span>[]
+					} <span class="kw">else</span> {
+						<span class="macro">vec!</span>[<span class="string">&quot;Counter for the related counted storage map&quot;</span>]
+					},
 				},
 			]
 		);

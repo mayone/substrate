@@ -286,6 +286,8 @@
 <span id="286">286</span>
 <span id="287">287</span>
 <span id="288">288</span>
+<span id="289">289</span>
+<span id="290">290</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2020-2022 Parity Technologies (UK) Ltd.</span>
@@ -425,6 +427,8 @@
 	<span class="kw">let</span> <span class="ident">count</span> <span class="op">=</span> <span class="ident">COUNTER</span>.<span class="ident">with</span>(<span class="op">|</span><span class="ident">counter</span><span class="op">|</span> <span class="ident">counter</span>.<span class="ident">borrow_mut</span>().<span class="ident">inc</span>());
 	<span class="kw">let</span> <span class="ident">macro_ident</span> <span class="op">=</span> <span class="ident">syn::Ident::new</span>(<span class="kw-2">&amp;</span><span class="macro">format!</span>(<span class="string">&quot;__is_call_part_defined_{}&quot;</span>, <span class="ident">count</span>), <span class="ident">span</span>);
 
+	<span class="kw">let</span> <span class="ident">capture_docs</span> <span class="op">=</span> <span class="kw">if</span> <span class="macro">cfg!</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;no-metadata-docs&quot;</span>) { <span class="string">&quot;never&quot;</span> } <span class="kw">else</span> { <span class="string">&quot;always&quot;</span> };
+
 	<span class="macro">quote::quote_spanned!</span>(<span class="ident">span</span> =&gt;
 		<span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
 		<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">__substrate_call_check</span> {
@@ -452,7 +456,7 @@
 		)]</span>
 		<span class="attribute">#[<span class="ident">codec</span>(<span class="ident">encode_bound</span>())]</span>
 		<span class="attribute">#[<span class="ident">codec</span>(<span class="ident">decode_bound</span>())]</span>
-		<span class="attribute">#[<span class="ident">scale_info</span>(<span class="ident">skip_type_params</span>(#<span class="ident">type_use_gen</span>), <span class="ident">capture_docs</span> <span class="op">=</span> <span class="string">&quot;always&quot;</span>)]</span>
+		<span class="attribute">#[<span class="ident">scale_info</span>(<span class="ident">skip_type_params</span>(#<span class="ident">type_use_gen</span>), <span class="ident">capture_docs</span> <span class="op">=</span> #<span class="ident">capture_docs</span>)]</span>
 		<span class="attribute">#[<span class="ident">allow</span>(<span class="ident">non_camel_case_types</span>)]</span>
 		<span class="kw">pub</span> <span class="kw">enum</span> #<span class="ident">call_ident</span><span class="op">&lt;</span>#<span class="ident">type_decl_bounded_gen</span><span class="op">&gt;</span> #<span class="ident">where_clause</span> {
 			<span class="attribute">#[<span class="ident">doc</span>(<span class="ident">hidden</span>)]</span>
