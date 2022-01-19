@@ -507,6 +507,14 @@
 <span id="507">507</span>
 <span id="508">508</span>
 <span id="509">509</span>
+<span id="510">510</span>
+<span id="511">511</span>
+<span id="512">512</span>
+<span id="513">513</span>
+<span id="514">514</span>
+<span id="515">515</span>
+<span id="516">516</span>
+<span id="517">517</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2017-2022 Parity Technologies (UK) Ltd.</span>
@@ -676,6 +684,10 @@
 		<span class="doccomment">/// Minimum amount of funds that should be placed in a deposit for making a proposal.</span>
 		<span class="attribute">#[<span class="ident">pallet::constant</span>]</span>
 		<span class="kw">type</span> <span class="ident">ProposalBondMinimum</span>: <span class="ident">Get</span><span class="op">&lt;</span><span class="ident">BalanceOf</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="op">&gt;</span>;
+
+		<span class="doccomment">/// Maximum amount of funds that should be placed in a deposit for making a proposal.</span>
+		<span class="attribute">#[<span class="ident">pallet::constant</span>]</span>
+		<span class="kw">type</span> <span class="ident">ProposalBondMaximum</span>: <span class="ident">Get</span><span class="op">&lt;</span><span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">BalanceOf</span><span class="op">&lt;</span><span class="self">Self</span>, <span class="ident">I</span><span class="op">&gt;</span><span class="op">&gt;</span><span class="op">&gt;</span>;
 
 		<span class="doccomment">/// Period between successive spends.</span>
 		<span class="attribute">#[<span class="ident">pallet::constant</span>]</span>
@@ -913,7 +925,11 @@
 
 	<span class="doccomment">/// The needed bond for a proposal whose spend is `value`.</span>
 	<span class="kw">fn</span> <span class="ident">calculate_bond</span>(<span class="ident">value</span>: <span class="ident">BalanceOf</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span>) -&gt; <span class="ident">BalanceOf</span><span class="op">&lt;</span><span class="ident">T</span>, <span class="ident">I</span><span class="op">&gt;</span> {
-		<span class="ident">T::ProposalBondMinimum::get</span>().<span class="ident">max</span>(<span class="ident">T::ProposalBond::get</span>() <span class="op">*</span> <span class="ident">value</span>)
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">r</span> <span class="op">=</span> <span class="ident">T::ProposalBondMinimum::get</span>().<span class="ident">max</span>(<span class="ident">T::ProposalBond::get</span>() <span class="op">*</span> <span class="ident">value</span>);
+		<span class="kw">if</span> <span class="kw">let</span> <span class="prelude-val">Some</span>(<span class="ident">m</span>) <span class="op">=</span> <span class="ident">T::ProposalBondMaximum::get</span>() {
+			<span class="ident">r</span> <span class="op">=</span> <span class="ident">r</span>.<span class="ident">min</span>(<span class="ident">m</span>);
+		}
+		<span class="ident">r</span>
 	}
 
 	<span class="doccomment">/// Spend some money! returns number of approvals before spend.</span>
