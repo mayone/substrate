@@ -54,6 +54,7 @@
 <span id="54">54</span>
 <span id="55">55</span>
 <span id="56">56</span>
+<span id="57">57</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2021-2022 Parity Technologies (UK) Ltd.</span>
@@ -78,6 +79,7 @@
 	<span class="ident">weights::Weight</span>,
 };
 
+<span class="doccomment">/// Migrate the pallet storage to v1.</span>
 <span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">migrate_to_v1</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&lt;</span><span class="ident">I</span><span class="op">&gt;</span>, <span class="ident">I</span>: <span class="lifetime">&#39;static</span>, <span class="ident">P</span>: <span class="ident">GetStorageVersion</span> <span class="op">+</span> <span class="ident">PalletInfoAccess</span><span class="op">&gt;</span>(
 ) -&gt; <span class="ident">frame_support::weights::Weight</span> {
 	<span class="kw">let</span> <span class="ident">on_chain_storage_version</span> <span class="op">=</span> <span class="op">&lt;</span><span class="ident">P</span> <span class="kw">as</span> <span class="ident">GetStorageVersion</span><span class="op">&gt;</span><span class="ident">::on_chain_storage_version</span>();

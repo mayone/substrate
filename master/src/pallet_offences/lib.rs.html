@@ -266,14 +266,6 @@
 <span id="266">266</span>
 <span id="267">267</span>
 <span id="268">268</span>
-<span id="269">269</span>
-<span id="270">270</span>
-<span id="271">271</span>
-<span id="272">272</span>
-<span id="273">273</span>
-<span id="274">274</span>
-<span id="275">275</span>
-<span id="276">276</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2019-2022 Parity Technologies (UK) Ltd.</span>
@@ -298,7 +290,7 @@
 <span class="comment">// Ensure we&#39;re `no_std` when compiling for Wasm.</span>
 <span class="attribute">#![<span class="ident">cfg_attr</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>), <span class="ident">no_std</span>)]</span>
 
-<span class="kw">mod</span> <span class="ident">migration</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">migration</span>;
 <span class="kw">mod</span> <span class="ident">mock</span>;
 <span class="kw">mod</span> <span class="ident">tests</span>;
 
@@ -323,7 +315,6 @@
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">pallet</span> {
 	<span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
 	<span class="kw">use</span> <span class="ident">frame_support::pallet_prelude</span>::<span class="kw-2">*</span>;
-	<span class="kw">use</span> <span class="ident">frame_system::pallet_prelude</span>::<span class="kw-2">*</span>;
 
 	<span class="attribute">#[<span class="ident">pallet::pallet</span>]</span>
 	<span class="attribute">#[<span class="ident">pallet::generate_store</span>(<span class="kw">pub</span>(<span class="kw">super</span>) <span class="kw">trait</span> <span class="ident">Store</span>)]</span>
@@ -385,13 +376,6 @@
 		<span class="doccomment">/// (kind-specific) time slot. This event is not deposited for duplicate slashes.</span>
 		<span class="doccomment">/// \[kind, timeslot\].</span>
 		<span class="ident">Offence</span> { <span class="ident">kind</span>: <span class="ident">Kind</span>, <span class="ident">timeslot</span>: <span class="ident">OpaqueTimeSlot</span> },
-	}
-
-	<span class="attribute">#[<span class="ident">pallet::hooks</span>]</span>
-	<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="ident">Hooks</span><span class="op">&lt;</span><span class="ident">BlockNumberFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-		<span class="kw">fn</span> <span class="ident">on_runtime_upgrade</span>() -&gt; <span class="ident">Weight</span> {
-			<span class="ident">migration::remove_deferred_storage</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>()
-		}
 	}
 }
 

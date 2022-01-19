@@ -751,28 +751,6 @@
 <span id="751">751</span>
 <span id="752">752</span>
 <span id="753">753</span>
-<span id="754">754</span>
-<span id="755">755</span>
-<span id="756">756</span>
-<span id="757">757</span>
-<span id="758">758</span>
-<span id="759">759</span>
-<span id="760">760</span>
-<span id="761">761</span>
-<span id="762">762</span>
-<span id="763">763</span>
-<span id="764">764</span>
-<span id="765">765</span>
-<span id="766">766</span>
-<span id="767">767</span>
-<span id="768">768</span>
-<span id="769">769</span>
-<span id="770">770</span>
-<span id="771">771</span>
-<span id="772">772</span>
-<span id="773">773</span>
-<span id="774">774</span>
-<span id="775">775</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2019-2022 Parity Technologies (UK) Ltd.</span>
@@ -820,13 +798,14 @@
 <span class="attribute">#![<span class="ident">cfg_attr</span>(<span class="ident">not</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;std&quot;</span>), <span class="ident">no_std</span>)]</span>
 
 <span class="kw">mod</span> <span class="ident">benchmarking</span>;
-<span class="kw">mod</span> <span class="ident">migrations</span>;
+
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">mock</span>;
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">tests</span>;
 <span class="kw">mod</span> <span class="ident">vesting_info</span>;
 
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">migrations</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">weights</span>;
 
 <span class="kw">use</span> <span class="ident">codec</span>::{<span class="ident">Decode</span>, <span class="ident">Encode</span>, <span class="ident">MaxEncodedLen</span>};
@@ -954,29 +933,6 @@
 
 	<span class="attribute">#[<span class="ident">pallet::hooks</span>]</span>
 	<span class="kw">impl</span><span class="op">&lt;</span><span class="ident">T</span>: <span class="ident">Config</span><span class="op">&gt;</span> <span class="ident">Hooks</span><span class="op">&lt;</span><span class="ident">BlockNumberFor</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="op">&gt;</span> <span class="kw">for</span> <span class="ident">Pallet</span><span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span> {
-		<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;try-runtime&quot;</span>)]</span>
-		<span class="kw">fn</span> <span class="ident">pre_upgrade</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span> {
-			<span class="kw">if</span> <span class="ident">StorageVersion</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::get</span>() <span class="op">==</span> <span class="ident">Releases::V0</span> {
-				<span class="ident">migrations::v1::pre_migrate</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>()
-			} <span class="kw">else</span> {
-				<span class="prelude-val">Ok</span>(())
-			}
-		}
-
-		<span class="kw">fn</span> <span class="ident">on_runtime_upgrade</span>() -&gt; <span class="ident">Weight</span> {
-			<span class="kw">if</span> <span class="ident">StorageVersion</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::get</span>() <span class="op">==</span> <span class="ident">Releases::V0</span> {
-				<span class="ident">StorageVersion</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::put</span>(<span class="ident">Releases::V1</span>);
-				<span class="ident">migrations::v1::migrate</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>().<span class="ident">saturating_add</span>(<span class="ident">T::DbWeight::get</span>().<span class="ident">reads_writes</span>(<span class="number">1</span>, <span class="number">1</span>))
-			} <span class="kw">else</span> {
-				<span class="ident">T::DbWeight::get</span>().<span class="ident">reads</span>(<span class="number">1</span>)
-			}
-		}
-
-		<span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">feature</span> <span class="op">=</span> <span class="string">&quot;try-runtime&quot;</span>)]</span>
-		<span class="kw">fn</span> <span class="ident">post_upgrade</span>() -&gt; <span class="prelude-ty">Result</span><span class="op">&lt;</span>(), <span class="kw-2">&amp;</span><span class="lifetime">&#39;static</span> <span class="ident">str</span><span class="op">&gt;</span> {
-			<span class="ident">migrations::v1::post_migrate</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>()
-		}
-
 		<span class="kw">fn</span> <span class="ident">integrity_test</span>() {
 			<span class="macro">assert!</span>(<span class="ident">T::MAX_VESTING_SCHEDULES</span> <span class="op">&gt;</span> <span class="number">0</span>, <span class="string">&quot;`MaxVestingSchedules` must ge greater than 0&quot;</span>);
 		}

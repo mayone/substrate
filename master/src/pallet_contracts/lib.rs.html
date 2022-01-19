@@ -936,10 +936,6 @@
 <span id="936">936</span>
 <span id="937">937</span>
 <span id="938">938</span>
-<span id="939">939</span>
-<span id="940">940</span>
-<span id="941">941</span>
-<span id="942">942</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2018-2022 Parity Technologies (UK) Ltd.</span>
@@ -1029,12 +1025,12 @@
 <span class="kw">mod</span> <span class="ident">gas</span>;
 <span class="kw">mod</span> <span class="ident">benchmarking</span>;
 <span class="kw">mod</span> <span class="ident">exec</span>;
-<span class="kw">mod</span> <span class="ident">migration</span>;
 <span class="kw">mod</span> <span class="ident">schedule</span>;
 <span class="kw">mod</span> <span class="ident">storage</span>;
 <span class="kw">mod</span> <span class="ident">wasm</span>;
 
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">chain_extension</span>;
+<span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">migration</span>;
 <span class="kw">pub</span> <span class="kw">mod</span> <span class="ident">weights</span>;
 
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
@@ -1262,10 +1258,6 @@
 				.<span class="ident">min</span>(<span class="ident">T::DeletionWeightLimit::get</span>());
 			<span class="ident">Storage</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span><span class="ident">::process_deletion_queue_batch</span>(<span class="ident">weight_limit</span>)
 				.<span class="ident">saturating_add</span>(<span class="ident">T::WeightInfo::on_initialize</span>())
-		}
-
-		<span class="kw">fn</span> <span class="ident">on_runtime_upgrade</span>() -&gt; <span class="ident">Weight</span> {
-			<span class="ident">migration::migrate</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>()
 		}
 	}
 

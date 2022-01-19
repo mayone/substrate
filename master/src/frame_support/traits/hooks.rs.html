@@ -400,6 +400,11 @@
 <span id="400">400</span>
 <span id="401">401</span>
 <span id="402">402</span>
+<span id="403">403</span>
+<span id="404">404</span>
+<span id="405">405</span>
+<span id="406">406</span>
+<span id="407">407</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2019-2022 Parity Technologies (UK) Ltd.</span>
@@ -646,10 +651,15 @@
 	<span class="doccomment">/// # Warning</span>
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// This function will be called before we initialized any runtime state, aka `on_initialize`</span>
-	<span class="doccomment">/// wasn&#39;t called yet. So, information like the block number and any other</span>
-	<span class="doccomment">/// block local data are not accessible.</span>
+	<span class="doccomment">/// wasn&#39;t called yet. So, information like the block number and any other block local data are</span>
+	<span class="doccomment">/// not accessible.</span>
 	<span class="doccomment">///</span>
 	<span class="doccomment">/// Return the non-negotiable weight consumed for runtime upgrade.</span>
+	<span class="doccomment">///</span>
+	<span class="doccomment">/// While this function can be freely implemented, using `on_runtime_upgrade` from inside the</span>
+	<span class="doccomment">/// pallet is discouraged and might get deprecated in the future. Alternatively, export the same</span>
+	<span class="doccomment">/// logic as a free-function from your pallet, and pass it to `type Executive` from the</span>
+	<span class="doccomment">/// top-level runtime.</span>
 	<span class="kw">fn</span> <span class="ident">on_runtime_upgrade</span>() -&gt; <span class="ident"><span class="kw">crate</span>::weights::Weight</span> {
 		<span class="number">0</span>
 	}

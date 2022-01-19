@@ -98,7 +98,6 @@
 <span id="98"> 98</span>
 <span id="99"> 99</span>
 <span id="100">100</span>
-<span id="101">101</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2021-2022 Parity Technologies (UK) Ltd.</span>
@@ -157,8 +156,7 @@
 <span class="attribute">#[<span class="ident">cfg</span>(<span class="ident">test</span>)]</span>
 <span class="kw">mod</span> <span class="ident">test</span> {
 	<span class="kw">use</span> <span class="kw">super</span>::<span class="kw-2">*</span>;
-	<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::mock</span>::{<span class="ident">new_test_ext</span>, <span class="ident">with_on_offence_fractions</span>, <span class="ident">Offences</span>, <span class="ident">Runtime</span> <span class="kw">as</span> <span class="ident">T</span>};
-	<span class="kw">use</span> <span class="ident">frame_support::traits::OnRuntimeUpgrade</span>;
+	<span class="kw">use</span> <span class="ident"><span class="kw">crate</span>::mock</span>::{<span class="ident">new_test_ext</span>, <span class="ident">with_on_offence_fractions</span>, <span class="ident">Runtime</span> <span class="kw">as</span> <span class="ident">T</span>};
 	<span class="kw">use</span> <span class="ident">sp_runtime::Perbill</span>;
 	<span class="kw">use</span> <span class="ident">sp_staking::offence::OffenceDetails</span>;
 
@@ -188,7 +186,7 @@
 
 			<span class="comment">// when</span>
 			<span class="macro">assert_eq!</span>(
-				<span class="ident">Offences::on_runtime_upgrade</span>(),
+				<span class="ident">remove_deferred_storage</span>::<span class="op">&lt;</span><span class="ident">T</span><span class="op">&gt;</span>(),
 				<span class="op">&lt;</span><span class="ident">T</span> <span class="kw">as</span> <span class="ident">frame_system::Config</span><span class="op">&gt;</span><span class="ident">::DbWeight::get</span>().<span class="ident">reads_writes</span>(<span class="number">1</span>, <span class="number">1</span>),
 			);
 
