@@ -3214,6 +3214,11 @@
 <span id="3214">3214</span>
 <span id="3215">3215</span>
 <span id="3216">3216</span>
+<span id="3217">3217</span>
+<span id="3218">3218</span>
+<span id="3219">3219</span>
+<span id="3220">3220</span>
+<span id="3221">3221</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2017-2022 Parity Technologies (UK) Ltd.</span>
@@ -3862,6 +3867,11 @@
 	<span class="doccomment">/// Number of downloaded blocks.</span>
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">num_downloaded_blocks</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">usize</span> {
 		<span class="self">self</span>.<span class="ident">downloaded_blocks</span>
+	}
+
+	<span class="doccomment">/// Returns the current number of peers stored within this state machine.</span>
+	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">num_peers</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">usize</span> {
+		<span class="self">self</span>.<span class="ident">peers</span>.<span class="ident">len</span>()
 	}
 
 	<span class="doccomment">/// Handle a new connected peer.</span>

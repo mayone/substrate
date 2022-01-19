@@ -1814,6 +1814,33 @@
 <span id="1814">1814</span>
 <span id="1815">1815</span>
 <span id="1816">1816</span>
+<span id="1817">1817</span>
+<span id="1818">1818</span>
+<span id="1819">1819</span>
+<span id="1820">1820</span>
+<span id="1821">1821</span>
+<span id="1822">1822</span>
+<span id="1823">1823</span>
+<span id="1824">1824</span>
+<span id="1825">1825</span>
+<span id="1826">1826</span>
+<span id="1827">1827</span>
+<span id="1828">1828</span>
+<span id="1829">1829</span>
+<span id="1830">1830</span>
+<span id="1831">1831</span>
+<span id="1832">1832</span>
+<span id="1833">1833</span>
+<span id="1834">1834</span>
+<span id="1835">1835</span>
+<span id="1836">1836</span>
+<span id="1837">1837</span>
+<span id="1838">1838</span>
+<span id="1839">1839</span>
+<span id="1840">1840</span>
+<span id="1841">1841</span>
+<span id="1842">1842</span>
+<span id="1843">1843</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2017-2022 Parity Technologies (UK) Ltd.</span>
@@ -1982,13 +2009,19 @@
 	<span class="ident">pending_messages</span>: <span class="ident">VecDeque</span><span class="op">&lt;</span><span class="ident">CustomMessageOutcome</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 	<span class="ident">config</span>: <span class="ident">ProtocolConfig</span>,
 	<span class="ident">genesis_hash</span>: <span class="ident">B::Hash</span>,
+	<span class="doccomment">/// State machine that handles the list of in-progress requests. Only full node peers are</span>
+	<span class="doccomment">/// registered.</span>
 	<span class="ident">sync</span>: <span class="ident">ChainSync</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span>,
-	<span class="comment">// All connected peers</span>
+	<span class="comment">// All connected peers. Contains both full and light node peers.</span>
 	<span class="ident">peers</span>: <span class="ident">HashMap</span><span class="op">&lt;</span><span class="ident">PeerId</span>, <span class="ident">Peer</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 	<span class="ident">chain</span>: <span class="ident">Arc</span><span class="op">&lt;</span><span class="kw">dyn</span> <span class="ident">Client</span><span class="op">&lt;</span><span class="ident">B</span><span class="op">&gt;</span><span class="op">&gt;</span>,
 	<span class="doccomment">/// List of nodes for which we perform additional logging because they are important for the</span>
 	<span class="doccomment">/// user.</span>
 	<span class="ident">important_peers</span>: <span class="ident">HashSet</span><span class="op">&lt;</span><span class="ident">PeerId</span><span class="op">&gt;</span>,
+	<span class="doccomment">/// Value that was passed as part of the configuration. Used to cap the number of full nodes.</span>
+	<span class="ident">default_peers_set_num_full</span>: <span class="ident">usize</span>,
+	<span class="doccomment">/// Number of slots to allocate to light nodes.</span>
+	<span class="ident">default_peers_set_num_light</span>: <span class="ident">usize</span>,
 	<span class="doccomment">/// Used to report reputation changes.</span>
 	<span class="ident">peerset_handle</span>: <span class="ident">sc_peerset::PeersetHandle</span>,
 	<span class="doccomment">/// Handles opening the unique substream and sending and receiving raw messages.</span>
@@ -2244,6 +2277,12 @@
 			<span class="ident">genesis_hash</span>: <span class="ident">info</span>.<span class="ident">genesis_hash</span>,
 			<span class="ident">sync</span>,
 			<span class="ident">important_peers</span>,
+			<span class="ident">default_peers_set_num_full</span>: <span class="ident">network_config</span>.<span class="ident">default_peers_set_num_full</span> <span class="kw">as</span> <span class="ident">usize</span>,
+			<span class="ident">default_peers_set_num_light</span>: {
+				<span class="kw">let</span> <span class="ident">total</span> <span class="op">=</span> <span class="ident">network_config</span>.<span class="ident">default_peers_set</span>.<span class="ident">out_peers</span> <span class="op">+</span>
+					<span class="ident">network_config</span>.<span class="ident">default_peers_set</span>.<span class="ident">in_peers</span>;
+				<span class="ident">total</span>.<span class="ident">saturating_sub</span>(<span class="ident">network_config</span>.<span class="ident">default_peers_set_num_full</span>) <span class="kw">as</span> <span class="ident">usize</span>
+			},
 			<span class="ident">peerset_handle</span>: <span class="ident">peerset_handle</span>.<span class="ident">clone</span>(),
 			<span class="ident">behaviour</span>,
 			<span class="ident">notification_protocols</span>: <span class="ident">network_config</span>
@@ -2622,6 +2661,21 @@
 				<span class="self">self</span>.<span class="ident">behaviour</span>.<span class="ident">disconnect_peer</span>(<span class="kw-2">&amp;</span><span class="ident">who</span>, <span class="ident">HARDCODED_PEERSETS_SYNC</span>);
 				<span class="kw">return</span> <span class="prelude-val">Err</span>(())
 			}
+		}
+
+		<span class="kw">if</span> <span class="ident">status</span>.<span class="ident">roles</span>.<span class="ident">is_full</span>() <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">sync</span>.<span class="ident">num_peers</span>() <span class="op">&gt;</span><span class="op">=</span> <span class="self">self</span>.<span class="ident">default_peers_set_num_full</span> {
+			<span class="macro">debug!</span>(<span class="ident">target</span>: <span class="string">&quot;sync&quot;</span>, <span class="string">&quot;Too many full nodes, rejecting {}&quot;</span>, <span class="ident">who</span>);
+			<span class="self">self</span>.<span class="ident">behaviour</span>.<span class="ident">disconnect_peer</span>(<span class="kw-2">&amp;</span><span class="ident">who</span>, <span class="ident">HARDCODED_PEERSETS_SYNC</span>);
+			<span class="kw">return</span> <span class="prelude-val">Err</span>(())
+		}
+
+		<span class="kw">if</span> <span class="ident">status</span>.<span class="ident">roles</span>.<span class="ident">is_light</span>() <span class="op">&amp;&amp;</span>
+			(<span class="self">self</span>.<span class="ident">peers</span>.<span class="ident">len</span>() <span class="op">-</span> <span class="self">self</span>.<span class="ident">sync</span>.<span class="ident">num_peers</span>()) <span class="op">&lt;</span> <span class="self">self</span>.<span class="ident">default_peers_set_num_light</span>
+		{
+			<span class="comment">// Make sure that not all slots are occupied by light clients.</span>
+			<span class="macro">debug!</span>(<span class="ident">target</span>: <span class="string">&quot;sync&quot;</span>, <span class="string">&quot;Too many light nodes, rejecting {}&quot;</span>, <span class="ident">who</span>);
+			<span class="self">self</span>.<span class="ident">behaviour</span>.<span class="ident">disconnect_peer</span>(<span class="kw-2">&amp;</span><span class="ident">who</span>, <span class="ident">HARDCODED_PEERSETS_SYNC</span>);
+			<span class="kw">return</span> <span class="prelude-val">Err</span>(())
 		}
 
 		<span class="kw">let</span> <span class="ident">peer</span> <span class="op">=</span> <span class="ident">Peer</span> {

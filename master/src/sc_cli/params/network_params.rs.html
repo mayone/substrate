@@ -233,6 +233,10 @@
 <span id="233">233</span>
 <span id="234">234</span>
 <span id="235">235</span>
+<span id="236">236</span>
+<span id="237">237</span>
+<span id="238">238</span>
+<span id="239">239</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2018-2022 Parity Technologies (UK) Ltd.</span>
@@ -321,9 +325,12 @@
 	<span class="attribute">#[<span class="ident">structopt</span>(<span class="ident">long</span> <span class="op">=</span> <span class="string">&quot;out-peers&quot;</span>, <span class="ident">value_name</span> <span class="op">=</span> <span class="string">&quot;COUNT&quot;</span>, <span class="ident">default_value</span> <span class="op">=</span> <span class="string">&quot;25&quot;</span>)]</span>
 	<span class="kw">pub</span> <span class="ident">out_peers</span>: <span class="ident">u32</span>,
 
-	<span class="doccomment">/// Specify the maximum number of incoming connections we&#39;re accepting.</span>
+	<span class="doccomment">/// Maximum number of inbound full nodes peers.</span>
 	<span class="attribute">#[<span class="ident">structopt</span>(<span class="ident">long</span> <span class="op">=</span> <span class="string">&quot;in-peers&quot;</span>, <span class="ident">value_name</span> <span class="op">=</span> <span class="string">&quot;COUNT&quot;</span>, <span class="ident">default_value</span> <span class="op">=</span> <span class="string">&quot;25&quot;</span>)]</span>
 	<span class="kw">pub</span> <span class="ident">in_peers</span>: <span class="ident">u32</span>,
+	<span class="doccomment">/// Maximum number of inbound light nodes peers.</span>
+	<span class="attribute">#[<span class="ident">structopt</span>(<span class="ident">long</span> <span class="op">=</span> <span class="string">&quot;in-peers-light&quot;</span>, <span class="ident">value_name</span> <span class="op">=</span> <span class="string">&quot;COUNT&quot;</span>, <span class="ident">default_value</span> <span class="op">=</span> <span class="string">&quot;100&quot;</span>)]</span>
+	<span class="kw">pub</span> <span class="ident">in_peers_light</span>: <span class="ident">u32</span>,
 
 	<span class="doccomment">/// Disable mDNS discovery.</span>
 	<span class="doccomment">///</span>
@@ -438,7 +445,7 @@
 			<span class="ident">boot_nodes</span>,
 			<span class="ident">net_config_path</span>,
 			<span class="ident">default_peers_set</span>: <span class="ident">SetConfig</span> {
-				<span class="ident">in_peers</span>: <span class="self">self</span>.<span class="ident">in_peers</span>,
+				<span class="ident">in_peers</span>: <span class="self">self</span>.<span class="ident">in_peers</span> <span class="op">+</span> <span class="self">self</span>.<span class="ident">in_peers_light</span>,
 				<span class="ident">out_peers</span>: <span class="self">self</span>.<span class="ident">out_peers</span>,
 				<span class="ident">reserved_nodes</span>: <span class="self">self</span>.<span class="ident">reserved_nodes</span>.<span class="ident">clone</span>(),
 				<span class="ident">non_reserved_mode</span>: <span class="kw">if</span> <span class="self">self</span>.<span class="ident">reserved_only</span> {
@@ -447,6 +454,7 @@
 					<span class="ident">NonReservedPeerMode::Accept</span>
 				},
 			},
+			<span class="ident">default_peers_set_num_full</span>: <span class="self">self</span>.<span class="ident">in_peers</span> <span class="op">+</span> <span class="self">self</span>.<span class="ident">out_peers</span>,
 			<span class="ident">listen_addresses</span>,
 			<span class="ident">public_addresses</span>,
 			<span class="ident">extra_sets</span>: <span class="ident">Vec::new</span>(),

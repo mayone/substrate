@@ -833,6 +833,13 @@
 <span id="833">833</span>
 <span id="834">834</span>
 <span id="835">835</span>
+<span id="836">836</span>
+<span id="837">837</span>
+<span id="838">838</span>
+<span id="839">839</span>
+<span id="840">840</span>
+<span id="841">841</span>
+<span id="842">842</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2017-2022 Parity Technologies (UK) Ltd.</span>
@@ -1251,6 +1258,11 @@
 	<span class="kw">pub</span> <span class="ident">request_response_protocols</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">RequestResponseConfig</span><span class="op">&gt;</span>,
 	<span class="doccomment">/// Configuration for the default set of nodes used for block syncing and transactions.</span>
 	<span class="kw">pub</span> <span class="ident">default_peers_set</span>: <span class="ident">SetConfig</span>,
+	<span class="doccomment">/// Number of substreams to reserve for full nodes for block syncing and transactions.</span>
+	<span class="doccomment">/// Any other slot will be dedicated to light nodes.</span>
+	<span class="doccomment">///</span>
+	<span class="doccomment">/// This value is implicitly capped to `default_set.out_peers + default_set.in_peers`.</span>
+	<span class="kw">pub</span> <span class="ident">default_peers_set_num_full</span>: <span class="ident">u32</span>,
 	<span class="doccomment">/// Configuration for extra sets of nodes.</span>
 	<span class="kw">pub</span> <span class="ident">extra_sets</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">NonDefaultSetConfig</span><span class="op">&gt;</span>,
 	<span class="doccomment">/// Client identifier. Sent over the wire for debugging purposes.</span>
@@ -1308,6 +1320,7 @@
 		<span class="ident">node_key</span>: <span class="ident">NodeKeyConfig</span>,
 		<span class="ident">net_config_path</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">PathBuf</span><span class="op">&gt;</span>,
 	) -&gt; <span class="self">Self</span> {
+		<span class="kw">let</span> <span class="ident">default_peers_set</span> <span class="op">=</span> <span class="ident">SetConfig::default</span>();
 		<span class="self">Self</span> {
 			<span class="ident">net_config_path</span>,
 			<span class="ident">listen_addresses</span>: <span class="ident">Vec::new</span>(),
@@ -1315,7 +1328,8 @@
 			<span class="ident">boot_nodes</span>: <span class="ident">Vec::new</span>(),
 			<span class="ident">node_key</span>,
 			<span class="ident">request_response_protocols</span>: <span class="ident">Vec::new</span>(),
-			<span class="ident">default_peers_set</span>: <span class="ident">Default::default</span>(),
+			<span class="ident">default_peers_set_num_full</span>: <span class="ident">default_peers_set</span>.<span class="ident">in_peers</span> <span class="op">+</span> <span class="ident">default_peers_set</span>.<span class="ident">out_peers</span>,
+			<span class="ident">default_peers_set</span>,
 			<span class="ident">extra_sets</span>: <span class="ident">Vec::new</span>(),
 			<span class="ident">client_version</span>: <span class="ident">client_version</span>.<span class="ident">into</span>(),
 			<span class="ident">node_name</span>: <span class="ident">node_name</span>.<span class="ident">into</span>(),
