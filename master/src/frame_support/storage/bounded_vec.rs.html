@@ -783,6 +783,7 @@
 <span id="783">783</span>
 <span id="784">784</span>
 <span id="785">785</span>
+<span id="786">786</span>
 </pre><pre class="rust"><code><span class="comment">// This file is part of Substrate.</span>
 
 <span class="comment">// Copyright (C) 2017-2022 Parity Technologies (UK) Ltd.</span>
@@ -1007,16 +1008,17 @@
 	<span class="doccomment">/// Returns `true` if the item was inserted.</span>
 	<span class="kw">pub</span> <span class="kw">fn</span> <span class="ident">force_insert_keep_left</span>(<span class="kw-2">&amp;mut</span> <span class="self">self</span>, <span class="ident">index</span>: <span class="ident">usize</span>, <span class="ident">element</span>: <span class="ident">T</span>) -&gt; <span class="ident">bool</span> {
 		<span class="comment">// Check against panics.</span>
-		<span class="kw">if</span> <span class="ident"><span class="self">Self</span>::bound</span>() <span class="op">&lt;</span> <span class="ident">index</span> <span class="op">|</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">len</span>() <span class="op">&lt;</span> <span class="ident">index</span> {
+		<span class="kw">if</span> <span class="ident"><span class="self">Self</span>::bound</span>() <span class="op">&lt;</span> <span class="ident">index</span> <span class="op">|</span><span class="op">|</span> <span class="self">self</span>.<span class="ident">len</span>() <span class="op">&lt;</span> <span class="ident">index</span> <span class="op">|</span><span class="op">|</span> <span class="ident"><span class="self">Self</span>::bound</span>() <span class="op">==</span> <span class="number">0</span> {
 			<span class="kw">return</span> <span class="bool-val">false</span>
 		}
 		<span class="comment">// Noop condition.</span>
 		<span class="kw">if</span> <span class="ident"><span class="self">Self</span>::bound</span>() <span class="op">==</span> <span class="ident">index</span> <span class="op">&amp;&amp;</span> <span class="self">self</span>.<span class="ident">len</span>() <span class="op">&lt;</span><span class="op">=</span> <span class="ident"><span class="self">Self</span>::bound</span>() {
 			<span class="kw">return</span> <span class="bool-val">false</span>
 		}
-		<span class="comment">// Cannot panic since self.len() &gt;= index;</span>
+		<span class="comment">// Cannot panic since `Self.bound() &gt; 0`</span>
+		<span class="self">self</span>.<span class="number">0</span>.<span class="ident">truncate</span>(<span class="ident"><span class="self">Self</span>::bound</span>() <span class="op">-</span> <span class="number">1</span>);
+		<span class="comment">// Cannot panic since `self.len() &gt;= index`;</span>
 		<span class="self">self</span>.<span class="number">0</span>.<span class="ident">insert</span>(<span class="ident">index</span>, <span class="ident">element</span>);
-		<span class="self">self</span>.<span class="number">0</span>.<span class="ident">truncate</span>(<span class="ident"><span class="self">Self</span>::bound</span>());
 		<span class="bool-val">true</span>
 	}
 
