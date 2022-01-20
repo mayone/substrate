@@ -4421,7 +4421,7 @@
 <span class="doccomment">/// 	pub trait Config: frame_system::Config {</span>
 <span class="doccomment">/// 		#[pallet::constant] // put the constant in metadata</span>
 <span class="doccomment">/// 		type MyGetParam: Get&lt;u32&gt;;</span>
-<span class="doccomment">/// 		type Balance: Parameter + From&lt;u8&gt;;</span>
+<span class="doccomment">/// 		type Balance: Parameter + MaxEncodedLen + From&lt;u8&gt;;</span>
 <span class="doccomment">/// 		type Event: From&lt;Event&lt;Self&gt;&gt; + IsType&lt;&lt;Self as frame_system::Config&gt;::Event&gt;;</span>
 <span class="doccomment">/// 	}</span>
 <span class="doccomment">///</span>
@@ -4610,7 +4610,7 @@
 <span class="doccomment">/// 	pub trait Config&lt;I: &#39;static = ()&gt;: frame_system::Config {</span>
 <span class="doccomment">/// 		#[pallet::constant]</span>
 <span class="doccomment">/// 		type MyGetParam: Get&lt;u32&gt;;</span>
-<span class="doccomment">/// 		type Balance: Parameter + From&lt;u8&gt;;</span>
+<span class="doccomment">/// 		type Balance: Parameter + MaxEncodedLen + From&lt;u8&gt;;</span>
 <span class="doccomment">/// 		type Event: From&lt;Event&lt;Self, I&gt;&gt; + IsType&lt;&lt;Self as frame_system::Config&gt;::Event&gt;;</span>
 <span class="doccomment">/// 	}</span>
 <span class="doccomment">///</span>

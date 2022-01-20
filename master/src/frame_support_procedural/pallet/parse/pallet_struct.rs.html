@@ -195,7 +195,7 @@
 	<span class="macro">syn::custom_keyword!</span>(<span class="ident">pallet</span>);
 	<span class="macro">syn::custom_keyword!</span>(<span class="ident">Pallet</span>);
 	<span class="macro">syn::custom_keyword!</span>(<span class="ident">generate_store</span>);
-	<span class="macro">syn::custom_keyword!</span>(<span class="ident">generate_storage_info</span>);
+	<span class="macro">syn::custom_keyword!</span>(<span class="ident">without_storage_info</span>);
 	<span class="macro">syn::custom_keyword!</span>(<span class="ident">storage_version</span>);
 	<span class="macro">syn::custom_keyword!</span>(<span class="ident">Store</span>);
 }
@@ -214,18 +214,18 @@
 	<span class="kw">pub</span> <span class="ident">attr_span</span>: <span class="ident">proc_macro2::Span</span>,
 	<span class="doccomment">/// Whether to specify the storages max encoded len when implementing `StorageInfoTrait`.</span>
 	<span class="doccomment">/// Contains the span of the attribute.</span>
-	<span class="kw">pub</span> <span class="ident">generate_storage_info</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">proc_macro2::Span</span><span class="op">&gt;</span>,
+	<span class="kw">pub</span> <span class="ident">without_storage_info</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">proc_macro2::Span</span><span class="op">&gt;</span>,
 	<span class="doccomment">/// The current storage version of the pallet.</span>
 	<span class="kw">pub</span> <span class="ident">storage_version</span>: <span class="prelude-ty">Option</span><span class="op">&lt;</span><span class="ident">syn::Path</span><span class="op">&gt;</span>,
 }
 
 <span class="doccomment">/// Parse for one variant of:</span>
 <span class="doccomment">/// * `#[pallet::generate_store($vis trait Store)]`</span>
-<span class="doccomment">/// * `#[pallet::generate_storage_info]`</span>
+<span class="doccomment">/// * `#[pallet::without_storage_info]`</span>
 <span class="doccomment">/// * `#[pallet::storage_version(STORAGE_VERSION)]`</span>
 <span class="kw">pub</span> <span class="kw">enum</span> <span class="ident">PalletStructAttr</span> {
 	<span class="ident">GenerateStore</span> { <span class="ident">span</span>: <span class="ident">proc_macro2::Span</span>, <span class="ident">vis</span>: <span class="ident">syn::Visibility</span>, <span class="ident">keyword</span>: <span class="ident">keyword::Store</span> },
-	<span class="ident">GenerateStorageInfoTrait</span>(<span class="ident">proc_macro2::Span</span>),
+	<span class="ident">WithoutStorageInfoTrait</span>(<span class="ident">proc_macro2::Span</span>),
 	<span class="ident">StorageVersion</span> { <span class="ident">storage_version</span>: <span class="ident">syn::Path</span>, <span class="ident">span</span>: <span class="ident">proc_macro2::Span</span> },
 }
 
@@ -233,7 +233,7 @@
 	<span class="kw">fn</span> <span class="ident">span</span>(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="ident">proc_macro2::Span</span> {
 		<span class="kw">match</span> <span class="self">self</span> {
 			<span class="ident"><span class="self">Self</span>::GenerateStore</span> { <span class="ident">span</span>, .. } =&gt; <span class="kw-2">*</span><span class="ident">span</span>,
-			<span class="ident"><span class="self">Self</span>::GenerateStorageInfoTrait</span>(<span class="ident">span</span>) =&gt; <span class="kw-2">*</span><span class="ident">span</span>,
+			<span class="ident"><span class="self">Self</span>::WithoutStorageInfoTrait</span>(<span class="ident">span</span>) =&gt; <span class="kw-2">*</span><span class="ident">span</span>,
 			<span class="ident"><span class="self">Self</span>::StorageVersion</span> { <span class="ident">span</span>, .. } =&gt; <span class="kw-2">*</span><span class="ident">span</span>,
 		}
 	}
@@ -257,9 +257,9 @@
 			<span class="ident">generate_content</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="macro">syn::Token!</span>[<span class="kw">trait</span>]<span class="op">&gt;</span>()<span class="question-mark">?</span>;
 			<span class="kw">let</span> <span class="ident">keyword</span> <span class="op">=</span> <span class="ident">generate_content</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">keyword::Store</span><span class="op">&gt;</span>()<span class="question-mark">?</span>;
 			<span class="prelude-val">Ok</span>(<span class="ident"><span class="self">Self</span>::GenerateStore</span> { <span class="ident">vis</span>, <span class="ident">keyword</span>, <span class="ident">span</span> })
-		} <span class="kw">else</span> <span class="kw">if</span> <span class="ident">lookahead</span>.<span class="ident">peek</span>(<span class="ident">keyword::generate_storage_info</span>) {
-			<span class="kw">let</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">content</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">keyword::generate_storage_info</span><span class="op">&gt;</span>()<span class="question-mark">?</span>.<span class="ident">span</span>();
-			<span class="prelude-val">Ok</span>(<span class="ident"><span class="self">Self</span>::GenerateStorageInfoTrait</span>(<span class="ident">span</span>))
+		} <span class="kw">else</span> <span class="kw">if</span> <span class="ident">lookahead</span>.<span class="ident">peek</span>(<span class="ident">keyword::without_storage_info</span>) {
+			<span class="kw">let</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">content</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">keyword::without_storage_info</span><span class="op">&gt;</span>()<span class="question-mark">?</span>.<span class="ident">span</span>();
+			<span class="prelude-val">Ok</span>(<span class="ident"><span class="self">Self</span>::WithoutStorageInfoTrait</span>(<span class="ident">span</span>))
 		} <span class="kw">else</span> <span class="kw">if</span> <span class="ident">lookahead</span>.<span class="ident">peek</span>(<span class="ident">keyword::storage_version</span>) {
 			<span class="kw">let</span> <span class="ident">span</span> <span class="op">=</span> <span class="ident">content</span>.<span class="ident">parse</span>::<span class="op">&lt;</span><span class="ident">keyword::storage_version</span><span class="op">&gt;</span>()<span class="question-mark">?</span>.<span class="ident">span</span>();
 
@@ -288,7 +288,7 @@
 		};
 
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">store</span> <span class="op">=</span> <span class="prelude-val">None</span>;
-		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">generate_storage_info</span> <span class="op">=</span> <span class="prelude-val">None</span>;
+		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">without_storage_info</span> <span class="op">=</span> <span class="prelude-val">None</span>;
 		<span class="kw">let</span> <span class="kw-2">mut</span> <span class="ident">storage_version_found</span> <span class="op">=</span> <span class="prelude-val">None</span>;
 
 		<span class="kw">let</span> <span class="ident">struct_attrs</span>: <span class="ident">Vec</span><span class="op">&lt;</span><span class="ident">PalletStructAttr</span><span class="op">&gt;</span> <span class="op">=</span> <span class="ident">helper::take_item_pallet_attrs</span>(<span class="kw-2">&amp;mut</span> <span class="ident">item</span>.<span class="ident">attrs</span>)<span class="question-mark">?</span>;
@@ -297,10 +297,10 @@
 				<span class="ident">PalletStructAttr::GenerateStore</span> { <span class="ident">vis</span>, <span class="ident">keyword</span>, .. } <span class="kw">if</span> <span class="ident">store</span>.<span class="ident">is_none</span>() =&gt; {
 					<span class="ident">store</span> <span class="op">=</span> <span class="prelude-val">Some</span>((<span class="ident">vis</span>, <span class="ident">keyword</span>));
 				},
-				<span class="ident">PalletStructAttr::GenerateStorageInfoTrait</span>(<span class="ident">span</span>)
-					<span class="kw">if</span> <span class="ident">generate_storage_info</span>.<span class="ident">is_none</span>() =&gt;
+				<span class="ident">PalletStructAttr::WithoutStorageInfoTrait</span>(<span class="ident">span</span>)
+					<span class="kw">if</span> <span class="ident">without_storage_info</span>.<span class="ident">is_none</span>() =&gt;
 				{
-					<span class="ident">generate_storage_info</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">span</span>);
+					<span class="ident">without_storage_info</span> <span class="op">=</span> <span class="prelude-val">Some</span>(<span class="ident">span</span>);
 				},
 				<span class="ident">PalletStructAttr::StorageVersion</span> { <span class="ident">storage_version</span>, .. }
 					<span class="kw">if</span> <span class="ident">storage_version_found</span>.<span class="ident">is_none</span>() =&gt;
@@ -335,7 +335,7 @@
 			<span class="ident">pallet</span>,
 			<span class="ident">store</span>,
 			<span class="ident">attr_span</span>,
-			<span class="ident">generate_storage_info</span>,
+			<span class="ident">without_storage_info</span>,
 			<span class="ident">storage_version</span>: <span class="ident">storage_version_found</span>,
 		})
 	}
